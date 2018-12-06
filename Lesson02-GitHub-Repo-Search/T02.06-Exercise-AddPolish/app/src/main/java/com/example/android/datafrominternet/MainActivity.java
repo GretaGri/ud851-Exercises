@@ -39,9 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView mSearchResultsTextView;
 
     // Done(12) Create a variable to store a reference to the error message TextView
-private TextView errorMessage;
+    private TextView errorMessage;
     // Done (24) Create a ProgressBar variable to store a reference to the ProgressBar
-private ProgressBar progressBar;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ private ProgressBar progressBar;
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_github_search_results_json);
 
         // Done (13) Get a reference to the error TextView using findViewById
-errorMessage = (TextView) findViewById(R.id.tv_error_message_display);
+        errorMessage = (TextView) findViewById(R.id.tv_error_message_display);
         // Done (25) Get a reference to the ProgressBar using findViewById
         progressBar = (ProgressBar) findViewById(R.id.pb_loading_indicator);
     }
@@ -73,15 +73,32 @@ errorMessage = (TextView) findViewById(R.id.tv_error_message_display);
     }
 
     // Done (14) Create a method called showJsonDataView to show the data and hide the error
-    public void showJsonDataView(){
+    public void showJsonDataView() {
         mSearchResultsTextView.setVisibility(View.VISIBLE);
         errorMessage.setVisibility(View.INVISIBLE);
     }
+
     // Done(15) Create a method called showErrorMessage to show the error and hide the data
-public void showErrorMessage(){
+    public void showErrorMessage() {
         errorMessage.setVisibility(View.VISIBLE);
         mSearchResultsTextView.setVisibility(View.INVISIBLE);
-}
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemThatWasClickedId = item.getItemId();
+        if (itemThatWasClickedId == R.id.action_search) {
+            makeGithubSearchQuery();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public class GithubQueryTask extends AsyncTask<URL, Void, String> {
 
@@ -113,25 +130,10 @@ public void showErrorMessage(){
                 //Done(17) Call showJsonDataView if we have valid, non-null results
                 showJsonDataView();
                 mSearchResultsTextView.setText(githubSearchResults);
+            } else {
+                // Done (16) Call showErrorMessage if the result is null in onPostExecute
+                showErrorMessage();
             }
-            // Done (16) Call showErrorMessage if the result is null in onPostExecute
-            showErrorMessage();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemThatWasClickedId = item.getItemId();
-        if (itemThatWasClickedId == R.id.action_search) {
-            makeGithubSearchQuery();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }
