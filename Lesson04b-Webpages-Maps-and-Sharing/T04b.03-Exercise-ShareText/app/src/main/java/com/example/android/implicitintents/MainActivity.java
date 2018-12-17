@@ -15,6 +15,7 @@
  */
 package com.example.android.implicitintents;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -83,10 +84,12 @@ public class MainActivity extends AppCompatActivity {
      * @see <http://developer.android.com/guide/components/intents-common.html/>
      */
     public void createYourOwn(View v) {
-        Toast.makeText(this,
-                "TODO: Create Your Own Implicit Intent",
-                Toast.LENGTH_SHORT)
-                .show();
+        String textToSearch = "How to be happy?";
+        actionSearch(textToSearch);
+//        Toast.makeText(this,
+//                "Done: Create Your Own Implicit Intent",
+//                Toast.LENGTH_SHORT)
+//                .show();
     }
 
     /**
@@ -172,5 +175,15 @@ public class MainActivity extends AppCompatActivity {
          .setText(textToShare)
          .startChooser();
          **/
+    }
+
+    private void actionSearch(String textToSearch) {
+        // Creating an intent to search for the text in browser
+        Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+        intent.putExtra(SearchManager.QUERY, textToSearch);
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }
