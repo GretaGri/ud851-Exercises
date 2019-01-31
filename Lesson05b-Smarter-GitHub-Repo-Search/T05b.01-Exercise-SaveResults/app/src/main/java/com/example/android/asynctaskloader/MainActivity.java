@@ -32,9 +32,11 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    // TODO (1) Create a static final key to store the query's URL
+    // Done (1) Create a static final key to store the query's URL
+    private static final String URL_KEY = "url_key";
 
-    // TODO (2) Create a static final key to store the search's raw JSON
+    // Done (2) Create a static final key to store the search's raw JSON
+    private static final String JSON_KEY = "json_key";
 
     private EditText mSearchBoxEditText;
 
@@ -59,7 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        // TODO (9) If the savedInstanceState bundle is not null, set the text of the URL and search results TextView respectively
+        // Done (9) If the savedInstanceState bundle is not null, set the text of the URL and search
+        // results TextView respectively
+        if (savedInstanceState != null) {
+            mUrlDisplayTextView.setText(savedInstanceState.getString(URL_KEY));
+            mSearchResultsTextView.setText(savedInstanceState.getString((JSON_KEY)));
+        }
+
     }
 
     /**
@@ -103,6 +111,41 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemThatWasClickedId = item.getItemId();
+        if (itemThatWasClickedId == R.id.action_search) {
+            makeGithubSearchQuery();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // Done(3) Override onSaveInstanceState to persist data across Activity recreation
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // Do the following steps within onSaveInstanceState
+        // Done (4) Make sure super.onSaveInstanceState is called before doing anything else
+        super.onSaveInstanceState(outState);
+
+        // Done(5) Put the contents of the TextView that contains our URL into a variable
+        String url = mUrlDisplayTextView.getText().toString();
+        // Done (6) Using the key for the query URL, put the string in the outState Bundle
+        outState.putString(URL_KEY, url);
+        // Done (7) Put the contents of the TextView that contains our raw JSON search results into
+        // a variable
+        String jsonSearchResults = mSearchResultsTextView.getText().toString();
+        // Done (8) Using the key for the raw JSON search results, put the search results into the
+        // outState Bundle
+        outState.putString(JSON_KEY, jsonSearchResults);
+    }
+
     public class GithubQueryTask extends AsyncTask<URL, Void, String> {
 
         @Override
@@ -134,30 +177,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemThatWasClickedId = item.getItemId();
-        if (itemThatWasClickedId == R.id.action_search) {
-            makeGithubSearchQuery();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    // TODO (3) Override onSaveInstanceState to persist data across Activity recreation
-    // Do the following steps within onSaveInstanceState
-    // TODO (4) Make sure super.onSaveInstanceState is called before doing anything else
-
-    // TODO (5) Put the contents of the TextView that contains our URL into a variable
-    // TODO (6) Using the key for the query URL, put the string in the outState Bundle
-
-    // TODO (7) Put the contents of the TextView that contains our raw JSON search results into a variable
-    // TODO (8) Using the key for the raw JSON search results, put the search results into the outState Bundle
 }
