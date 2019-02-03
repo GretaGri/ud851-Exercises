@@ -33,12 +33,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-// TODO (1) Implement OnSharedPreferenceChangeListener
-public class VisualizerActivity extends AppCompatActivity {
+// Done(1) Implement OnSharedPreferenceChangeListener
+public class VisualizerActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int MY_PERMISSION_RECORD_AUDIO_REQUEST_CODE = 88;
     private VisualizerView mVisualizerView;
     private AudioInputReader mAudioInputReader;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +52,34 @@ public class VisualizerActivity extends AppCompatActivity {
 
     private void setupSharedPreferences() {
         // Get all of the values from shared preferences to set it up
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mVisualizerView.setShowBass(sharedPreferences.getBoolean(getString(R.string.pref_show_bass_key),
                 getResources().getBoolean(R.bool.pref_show_bass_default)));
         mVisualizerView.setShowMid(true);
         mVisualizerView.setShowTreble(true);
         mVisualizerView.setMinSizeScale(1);
         mVisualizerView.setColor(getString(R.string.pref_color_red_value));
-        // TODO (3) Register the listener
+
+        // Done (3) Register the listener
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
-    // TODO (2) Override the onSharedPreferenceChanged method and update the show bass preference
-    // TODO (4) Override onDestroy and unregister the listener
+    // Done(2) Override the onSharedPreferenceChanged method and update the show bass preference
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_show_bass_key))) {
+            mVisualizerView.setShowBass(sharedPreferences.getBoolean(getString(R.string.pref_show_bass_key),
+                    getResources().getBoolean(R.bool.pref_show_bass_default)));
+        }
+    }
+    // Done (4) Override onDestroy and unregister the listener
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+    }
 
     /**
      * Methods for setting up the menu
@@ -111,7 +128,7 @@ public class VisualizerActivity extends AppCompatActivity {
             mAudioInputReader.restart();
         }
     }
-    
+
     /**
      * App Permissions for Audio
      **/
@@ -121,7 +138,7 @@ public class VisualizerActivity extends AppCompatActivity {
             // And if we're on SDK M or later...
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Ask again, nicely, for the permissions.
-                String[] permissionsWeNeed = new String[]{ Manifest.permission.RECORD_AUDIO };
+                String[] permissionsWeNeed = new String[]{Manifest.permission.RECORD_AUDIO};
                 requestPermissions(permissionsWeNeed, MY_PERMISSION_RECORD_AUDIO_REQUEST_CODE);
             }
         } else {
